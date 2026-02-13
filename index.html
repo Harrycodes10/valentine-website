@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 Love Found</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+    transition:background 0.8s ease;
+}
+
+.container{
+    width:90%;
+    max-width:520px;
+    padding:40px;
+    border-radius:25px;
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.15);
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
+    text-align:center;
+    position:relative;
+    transition:0.6s ease;
+}
+
+h1{
+    font-weight:600;
+    margin-bottom:15px;
+}
+
+p{
+    margin-bottom:20px;
+    min-height:60px;
+}
+
+button{
+    padding:12px 28px;
+    margin:10px;
+    border:none;
+    border-radius:30px;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.3s ease;
+    box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+button:hover{
+    transform:scale(1.1);
+}
+
+#yesBtn{
+    background:#ff4e88;
+    color:white;
+}
+
+#noBtn{
+    background:white;
+    color:#ff4e88;
+}
+
+.hidden{
+    opacity:0;
+    pointer-events:none;
+    transform:translateY(20px);
+    transition:0.6s ease;
+}
+
+.fade{
+    transition:0.6s ease;
+}
+
+.refresh-btn{
+    background:#ff4e88;
+    color:white;
+}
+
+/* Floating Hearts */
+.heart{
+    position:fixed;
+    font-size:20px;
+    animation:float 6s linear forwards;
+}
+
+@keyframes float{
+    0%{transform:translateY(100vh) scale(1);}
+    100%{transform:translateY(-10vh) scale(1.5);}
+}
+
+/* Confetti */
+.confetti{
+    position:fixed;
+    width:10px;
+    height:10px;
+    top:-10px;
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(100vh) rotate(720deg);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- 404 Screen -->
+    <div id="errorScreen">
+        <h1>404</h1>
+        <p>Oops! Page Not Found 💔</p>
+        <button class="refresh-btn" onclick="showValentine()">Refresh</button>
+    </div>
+
+    <!-- Valentine Screen -->
+    <div id="valentineScreen" class="hidden">
+        <h1>Will you be my Valentine? 💘</h1>
+
+        <div id="buttons">
+            <button id="yesBtn">YES</button>
+            <button id="noBtn">NO 💔</button>
+        </div>
+
+        <!-- 💌 EDIT ONLY THIS MESSAGE -->
+        <p id="loveMessage"></p>
+
+    </div>
+
+</div>
+
+<!-- Background Music -->
+<audio id="bgMusic" loop>
+  <source src="https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav" type="audio/wav">
+</audio>
+
+<script>
+const errorScreen = document.getElementById("errorScreen");
+const valentineScreen = document.getElementById("valentineScreen");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const loveMessage = document.getElementById("loveMessage");
+const buttonsDiv = document.getElementById("buttons");
+const bgMusic = document.getElementById("bgMusic");
+
+let noClickCount = 0;
+
+function showValentine(){
+    errorScreen.classList.add("hidden");
+    setTimeout(()=>{
+        valentineScreen.classList.remove("hidden");
+    },600);
+}
+
+/* YES CLICK */
+yesBtn.addEventListener("click",()=>{
+    
+    typeMessage(`By clicking YES you agree to:
+
+- Unlimited cuddles
+- Lifetime supply of bad puns
+- Mutual pizza stealing rights
+Effective immediately! 🚀`);
+
+    bgMusic.play();
+
+    setTimeout(()=>{
+        buttonsDiv.style.opacity="0";
+        buttonsDiv.style.pointerEvents="none";
+    },1000);
+
+    launchConfetti();
+    launchHearts();
+});
+
+/* Typing Effect */
+function typeMessage(text){
+    loveMessage.innerHTML="";
+    let i=0;
+    let interval=setInterval(()=>{
+        loveMessage.innerHTML+=text.charAt(i);
+        i++;
+        if(i>=text.length) clearInterval(interval);
+    },40);
+}
+
+/* NO CLICK */
+noBtn.addEventListener("click",()=>{
+    noClickCount++;
+
+    const x=Math.random()*(window.innerWidth-100);
+    const y=Math.random()*(window.innerHeight-50);
+    noBtn.style.position="fixed";
+    noBtn.style.left=x+"px";
+    noBtn.style.top=y+"px";
+
+    const gradients=[
+        "linear-gradient(135deg,#a18cd1,#fbc2eb)",
+        "linear-gradient(135deg,#fad0c4,#ffd1ff)",
+        "linear-gradient(135deg,#ffecd2,#fcb69f)",
+        "linear-gradient(135deg,#ff9a9e,#fecfef)"
+    ];
+    document.body.style.background=gradients[Math.floor(Math.random()*gradients.length)];
+
+    if(noClickCount>=2){
+        noBtn.innerHTML="NO 😭";
+    }
+});
+
+/* Confetti */
+function launchConfetti(){
+    const duration=5000;
+    const end=Date.now()+duration;
+
+    const interval=setInterval(()=>{
+        if(Date.now()>end){
+            clearInterval(interval);
+            return;
+        }
+        const confetti=document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left=Math.random()*window.innerWidth+"px";
+        confetti.style.background=`hsl(${Math.random()*360},100%,50%)`;
+        confetti.style.animationDuration=(Math.random()*3+2)+"s";
+        document.body.appendChild(confetti);
+        setTimeout(()=>confetti.remove(),5000);
+    },100);
+}
+
+/* Floating Hearts */
+function launchHearts(){
+    setInterval(()=>{
+        const heart=document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML="💖";
+        heart.style.left=Math.random()*100+"vw";
+        heart.style.animationDuration=(Math.random()*3+3)+"s";
+        document.body.appendChild(heart);
+        setTimeout(()=>heart.remove(),6000);
+    },500);
+}
+</script>
+
+</body>
+</html>
